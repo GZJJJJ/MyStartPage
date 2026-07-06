@@ -92,7 +92,7 @@ export function TaskPanel({ tasks, onChange, className = "" }: TaskPanelProps) {
                   ),
                 )
               }
-              className="h-4 w-4 rounded border-white/50 bg-white/30 text-[#93b8c2] focus:ring-2 focus:ring-[#93b8c2]/25 dark:border-white/10 dark:bg-slate-900/30"
+              className="h-4 w-4 rounded border-white/35 bg-[#fff8ee]/24 text-[#93b8c2] focus:ring-2 focus:ring-[#93b8c2]/25 dark:border-white/10 dark:bg-[#07111f]/42"
               aria-label={`完成 ${task.text}`}
             />
             <span

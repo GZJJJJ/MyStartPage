@@ -58,7 +58,7 @@ export function useCloudSync(
   const client = useMemo(() => getBrowserSupabaseClient(), []);
   const [session, setSession] = useState<Session | null>(null);
   const [status, setStatus] = useState<CloudSyncStatus>("idle");
-  const [message, setMessage] = useState(configured ? "" : "未配置 Supabase 环境变量");
+  const [message, setMessage] = useState(configured ? "" : "云同步暂不可用");
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
   const initializedUserRef = useRef<string | null>(null);
   const debounceRef = useRef<number | null>(null);
@@ -108,7 +108,7 @@ export function useCloudSync(
         setData(result.data);
         setLastSyncedAt(new Date().toISOString());
         setStatus("success");
-        setMessage(result.migrated ? "已完成首次云端迁移" : "已从云端同步");
+        setMessage(result.migrated ? "已完成首次同步" : "已从云端同步");
         window.setTimeout(() => {
           applyingRemoteRef.current = false;
         }, 0);
@@ -127,16 +127,16 @@ export function useCloudSync(
 
   const syncNow = useCallback(async () => {
     if (!client) {
-      throw new Error("未配置 Supabase");
+      throw new Error("云同步暂不可用");
     }
 
     const currentSession = await requireSession(client);
     setStatus("syncing");
-    setMessage("正在同步到云端");
+    setMessage("正在同步");
     await replaceCloudDashboardData(client, data, currentSession.user.id, getSessionEmail(currentSession));
     setLastSyncedAt(new Date().toISOString());
     setStatus("success");
-    setMessage("已同步到云端");
+    setMessage("刚刚同步");
   }, [client, data]);
 
   useEffect(() => {
@@ -164,7 +164,7 @@ export function useCloudSync(
 
   const signIn = useCallback(async (email: string, password: string) => {
     if (!client) {
-      throw new Error("未配置 Supabase");
+      throw new Error("云同步暂不可用");
     }
 
     setStatus("syncing");
@@ -182,7 +182,7 @@ export function useCloudSync(
 
   const signUp = useCallback(async (email: string, password: string) => {
     if (!client) {
-      throw new Error("未配置 Supabase");
+      throw new Error("云同步暂不可用");
     }
 
     setStatus("syncing");
@@ -195,7 +195,7 @@ export function useCloudSync(
     }
 
     setStatus("success");
-    setMessage("注册请求已提交，请按 Supabase 邮件策略完成验证");
+    setMessage("注册请求已提交，请按邮件提示完成验证");
   }, [client]);
 
   const signOut = useCallback(async () => {
@@ -219,7 +219,7 @@ export function useCloudSync(
 
   const testEmailReminder = useCallback(async () => {
     if (!client) {
-      throw new Error("未配置 Supabase");
+      throw new Error("云同步暂不可用");
     }
 
     const currentSession = await requireSession(client);

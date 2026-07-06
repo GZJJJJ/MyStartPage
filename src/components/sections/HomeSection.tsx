@@ -32,17 +32,16 @@ export function HomeSection({ data, onNavigate }: HomeSectionProps) {
 
   return (
     <section className="mx-auto max-w-5xl">
-      <SectionHeader title="首页" subtitle="像打开一套安静的个人桌面，只留下今天需要进入的窗口。" />
+      <SectionHeader title="首页" subtitle="把今天要用的东西放在手边。" />
 
       <GlassSurface className="p-7 sm:p-9">
         <div className="grid gap-9 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div>
-            <p className="section-title-en text-sm uppercase text-[#75847c] dark:text-[#9ca9b8]">Joe Space</p>
-            <h2 className="mt-3 max-w-xl text-2xl font-medium leading-tight text-[#334247] dark:text-[#e8edf2] sm:text-4xl">
-              今天只打开一个窗口。
+            <h2 className="max-w-xl text-2xl font-medium leading-tight text-[#334247] dark:text-[#e8edf2] sm:text-4xl">
+              今天先从一件小事开始。
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-7 text-[#65736c] dark:text-[#b8c4ce]">
-              搜索在状态栏，常用入口、任务、DDL 和数据工具都收进左侧栏目。首页只做轻量提示，不再承担 dashboard。
+              常用入口、任务和 DDL 都收好了。需要什么，就打开什么。
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">

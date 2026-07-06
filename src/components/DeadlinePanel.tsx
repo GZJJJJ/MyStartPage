@@ -141,12 +141,12 @@ export function DeadlinePanel({ deadlines, onChange, className = "" }: DeadlineP
               type="checkbox"
               checked={notifyByEmail}
               onChange={(event) => setNotifyByEmail(event.target.checked)}
-              className="rounded border-white/40 bg-white/30 text-[#6f969b] focus:ring-[#93b8c2]/30"
+              className="rounded border-white/35 bg-[#fff8ee]/24 text-[#6f969b] focus:ring-[#93b8c2]/30 dark:border-white/10 dark:bg-[#07111f]/42"
             />
             邮件提醒
           </label>
           <label className="inline-flex items-center gap-2 text-sm text-[#718078] dark:text-slate-400">
-            <input type="checkbox" checked={false} disabled className="rounded border-white/40 bg-white/30" />
+            <input type="checkbox" checked={false} disabled className="rounded border-white/35 bg-[#fff8ee]/24 dark:border-white/10 dark:bg-[#07111f]/42" />
             微信提醒（预留）
           </label>
           <button type="submit" className={`${primaryButtonClass} h-11 px-4 sm:col-span-2`}>

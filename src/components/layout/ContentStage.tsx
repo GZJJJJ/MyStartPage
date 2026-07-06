@@ -34,7 +34,7 @@ export function ContentStage({
   onImport,
 }: ContentStageProps) {
   return (
-    <main className="px-4 py-8 sm:px-8 lg:px-12 lg:py-10">
+    <main className="px-4 pb-8 pt-56 sm:px-8 lg:px-12 lg:pb-10 xl:pt-36">
       <div key={activeSection} className="stage-enter mx-auto max-w-6xl">
         {activeSection === "home" ? <HomeSection data={data} onNavigate={onSectionChange} /> : null}
         {activeSection === "shortcuts" ? (

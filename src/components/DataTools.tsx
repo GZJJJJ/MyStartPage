@@ -47,7 +47,7 @@ export function DataTools({ data, cloudSync, onImport, className = "" }: DataToo
     link.download = `my-start-page-${payload.exportedAt.slice(0, 10)}.json`;
     link.click();
     window.URL.revokeObjectURL(url);
-    setMessage("已导出 JSON");
+    setMessage("已导出备份");
   }
 
   function handleImport(event: ChangeEvent<HTMLInputElement>) {
@@ -67,9 +67,9 @@ export function DataTools({ data, cloudSync, onImport, className = "" }: DataToo
       try {
         const imported = parseImportPayload(String(reader.result));
         onImport(imported);
-        setMessage("导入成功，已写入 localStorage，登录后会自动同步到云端");
+        setMessage("导入成功，数据已恢复");
       } catch {
-        setMessage("导入失败：JSON 格式不正确");
+        setMessage("导入失败：备份文件格式不正确");
       }
     };
     reader.readAsText(file);
@@ -112,20 +112,20 @@ export function DataTools({ data, cloudSync, onImport, className = "" }: DataToo
       await action();
       setMessage(success);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "操作失败");
+      setMessage(error instanceof Error ? error.message : "同步失败，请稍后再试");
     }
   }
 
   return (
     <div className={`space-y-6 ${className}`}>
-      <Panel title="云同步" subtitle="Supabase Auth + Postgres" icon={Cloud}>
+      <Panel title="云同步" subtitle="登录后，快捷入口、任务和 DDL 可以在多台设备间同步。" icon={Cloud}>
         <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[22px] border border-white/30 bg-white/18 p-4 dark:border-white/10 dark:bg-slate-950/18">
             <p className="text-sm font-medium text-[#344046] dark:text-slate-100">
               {cloudSync.authenticated ? "已登录" : "未登录"}
             </p>
             <p className="mt-1 break-words text-sm text-[#718078] dark:text-slate-400">
-              {cloudSync.authenticated ? cloudSync.userEmail : cloudSync.configured ? "登录后会自动迁移本地数据并同步" : "缺少 Supabase 环境变量"}
+              {cloudSync.authenticated ? cloudSync.userEmail : cloudSync.configured ? "登录后可以在不同设备之间同步数据。" : "云同步暂不可用"}
             </p>
             <p className="mt-3 text-sm text-[#718078] dark:text-slate-400">最近同步：{formatSyncTime(cloudSync.lastSyncedAt)}</p>
             {cloudSync.message ? <p className="mt-3 text-sm text-[#4f7076] dark:text-[#b8ced2]">{cloudSync.message}</p> : null}
@@ -135,12 +135,12 @@ export function DataTools({ data, cloudSync, onImport, className = "" }: DataToo
             <div className="grid content-start gap-3">
               <button
                 type="button"
-                onClick={() => runAction(cloudSync.syncNow, "已手动同步")}
+                onClick={() => runAction(cloudSync.syncNow, "刚刚同步")}
                 disabled={busy}
                 className={primaryButtonClass}
               >
                 <RefreshCw size={17} />
-                手动同步
+                同步一次
               </button>
               <button
                 type="button"
@@ -208,15 +208,15 @@ export function DataTools({ data, cloudSync, onImport, className = "" }: DataToo
         </div>
       </Panel>
 
-      <Panel title="JSON 备份" subtitle="localStorage JSON" icon={Archive}>
+      <Panel title="数据备份" subtitle="导出一份本地备份，换设备或重装前可以用来恢复。" icon={Archive}>
         <div className="grid gap-4 sm:grid-cols-2">
           <button type="button" onClick={exportData} className={primaryButtonClass}>
             <Download size={17} />
-            导出 JSON
+            导出备份
           </button>
           <button type="button" onClick={() => inputRef.current?.click()} className={secondaryButtonClass}>
             <Upload size={17} />
-            导入 JSON
+            导入备份
           </button>
         </div>
         <input
@@ -225,10 +225,10 @@ export function DataTools({ data, cloudSync, onImport, className = "" }: DataToo
           accept="application/json"
           onChange={handleImport}
           className="hidden"
-          aria-label="导入 JSON 文件"
+          aria-label="导入备份文件"
         />
         <p className="mt-5 text-sm leading-6 text-[#718078] dark:text-slate-400">
-          本地缓存仍使用原 localStorage key。导入导出的 JSON 仍为 version 1，旧 DDL 会自动补默认提醒字段。
+          备份文件只保存在你自己的设备上。导入前建议先导出现有数据。
         </p>
         {message ? <p className="mt-4 text-sm text-[#4f7076] dark:text-[#b8ced2]">{message}</p> : null}
       </Panel>

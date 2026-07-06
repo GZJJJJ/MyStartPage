@@ -67,6 +67,7 @@ export function Dashboard() {
   return (
     <AppShell
       activeSection={activeSection}
+      darkMode={darkMode}
       onSectionChange={setActiveSection}
       topBar={
         <TopStatusBar

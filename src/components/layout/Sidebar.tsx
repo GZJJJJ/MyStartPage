@@ -24,16 +24,16 @@ function navButtonClass(active: boolean): string {
     "focus:outline-none focus:ring-2 focus:ring-[#93b8c2]/24",
     active
       ? "bg-white/34 text-[#26393e] dark:bg-white/10 dark:text-[#f3d98a]"
-      : "text-[#64736d] hover:bg-white/24 hover:text-[#334247] dark:text-[#b9c5cf] dark:hover:bg-white/8 dark:hover:text-[#e8edf2]",
+      : "text-[#64736d] hover:bg-white/[0.24] hover:text-[#334247] dark:text-[#b9c5cf] dark:hover:bg-white/8 dark:hover:text-[#e8edf2]",
   ].join(" ");
 }
 
 export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
   return (
     <>
-      <aside className="group/sidebar fixed left-0 top-0 z-30 hidden h-screen w-16 border-r border-white/30 bg-white/18 px-2 py-6 backdrop-blur-2xl transition-[width] duration-300 ease-out hover:w-56 dark:border-white/10 dark:bg-slate-950/24 sm:block">
+      <aside className="group/sidebar fixed left-0 top-0 z-50 hidden h-screen w-16 border-r border-white/30 bg-white/[0.22] px-2 py-6 backdrop-blur-2xl transition-[width] duration-300 ease-out hover:w-56 dark:border-white/10 dark:bg-slate-950/[0.24] sm:block">
         <div className="mb-8 flex h-12 items-center rounded-2xl px-2 text-[#334247] dark:text-[#e8edf2]">
-          <span className="grid h-10 w-10 flex-none place-items-center rounded-2xl bg-white/30 dark:bg-white/8">
+          <span className="grid h-10 w-10 flex-none place-items-center rounded-2xl bg-white/[0.30] dark:bg-white/8">
             <Sparkles size={19} />
           </span>
           <span className="sidebar-logo ml-3 whitespace-nowrap text-lg opacity-0 transition duration-200 translate-x-2 group-hover/sidebar:translate-x-0 group-hover/sidebar:opacity-100">
@@ -69,7 +69,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
         </nav>
       </aside>
 
-      <nav className="fixed inset-x-3 bottom-3 z-30 grid grid-cols-6 rounded-[26px] border border-white/40 bg-white/36 p-2 shadow-[0_16px_50px_rgba(83,98,104,0.16)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/34 sm:hidden" aria-label="移动端栏目">
+      <nav className="fixed inset-x-3 bottom-3 z-30 grid grid-cols-6 rounded-[26px] border border-white/30 bg-white/[0.28] p-2 shadow-[0_16px_50px_rgba(83,98,104,0.16)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/[0.28] sm:hidden" aria-label="移动端栏目">
         {sections.map((section) => {
           const Icon = sectionIcons[section.id];
           const active = section.id === activeSection;
