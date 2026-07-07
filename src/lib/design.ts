@@ -1,12 +1,36 @@
+export const liquidGlassChromeClass = [
+  "border border-white/[0.34] bg-white/[0.20]",
+  "shadow-[0_20px_70px_rgba(70,85,90,0.16),inset_0_1px_1px_rgba(255,255,255,0.32)]",
+  "backdrop-blur-[36px]",
+  "dark:border-white/[0.10] dark:bg-slate-950/[0.32]",
+  "dark:shadow-[0_20px_70px_rgba(0,0,0,0.36),inset_0_1px_1px_rgba(255,255,255,0.12)]",
+].join(" ");
+
+export const liquidGlassControlClass = [
+  "border border-white/[0.30] bg-[#fff8ee]/[0.20]",
+  "shadow-[inset_0_1px_1px_rgba(255,255,255,0.26),0_8px_26px_rgba(70,85,90,0.10)]",
+  "backdrop-blur-[30px]",
+  "dark:border-white/[0.10] dark:bg-[#07111f]/[0.36]",
+  "dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.10),0_8px_26px_rgba(0,0,0,0.28)]",
+].join(" ");
+
+export const liquidGlassSurfaceClass = [
+  "border border-white/[0.32] bg-white/[0.18]",
+  "shadow-[0_24px_80px_rgba(70,85,90,0.16),inset_0_1px_1px_rgba(255,255,255,0.22)]",
+  "backdrop-blur-[34px]",
+  "dark:border-white/[0.10] dark:bg-slate-950/[0.28]",
+  "dark:shadow-[0_24px_80px_rgba(0,0,0,0.34),inset_0_1px_1px_rgba(255,255,255,0.10)]",
+].join(" ");
+
 export const glassSurfaceClass = [
-  "rounded-[28px] border border-white/35 bg-white/[0.20] shadow-[0_24px_70px_rgba(70,85,90,0.14)]",
-  "backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/[0.26] dark:shadow-[0_24px_70px_rgba(0,0,0,0.32)]",
+  "rounded-[28px]",
+  liquidGlassSurfaceClass,
 ].join(" ");
 
 export const softPanelClass = [
   "group p-6 transition-all duration-200 ease-out",
   glassSurfaceClass,
-  "hover:bg-white/[0.24] hover:-translate-y-px",
+  "hover:bg-white/[0.24]",
   "focus-within:bg-white/[0.24] focus-within:border-white/50",
   "dark:hover:bg-slate-950/30 dark:focus-within:bg-slate-950/30",
 ].join(" ");
@@ -53,7 +77,8 @@ export const inputClass = [
 ].join(" ");
 
 export const tileClass = [
-  "rounded-[24px] border border-white/30 bg-white/[0.18]",
-  "transition-all duration-200 hover:-translate-y-px hover:bg-white/[0.28]",
-  "dark:border-white/10 dark:bg-slate-950/[0.18] dark:hover:bg-white/10",
+  "rounded-[24px]",
+  liquidGlassControlClass,
+  "transition-all duration-200 hover:bg-white/[0.26]",
+  "dark:hover:bg-white/[0.08]",
 ].join(" ");

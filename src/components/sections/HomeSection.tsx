@@ -4,7 +4,7 @@ import { ArrowRight, CalendarClock, CheckCircle, Compass } from "lucide-react";
 import { GlassSurface } from "@/components/ui/GlassSurface";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getDaysRemaining, sortDeadlines } from "@/lib/date";
-import { primaryButtonClass, secondaryButtonClass } from "@/lib/design";
+import { primaryButtonClass, secondaryButtonClass, tileClass } from "@/lib/design";
 import type { SectionId } from "@/lib/sections";
 import type { DashboardData } from "@/lib/types";
 
@@ -37,11 +37,11 @@ export function HomeSection({ data, onNavigate }: HomeSectionProps) {
       <GlassSurface className="p-7 sm:p-9">
         <div className="grid gap-9 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <div>
-            <h2 className="max-w-xl text-2xl font-medium leading-tight text-[#334247] dark:text-[#e8edf2] sm:text-4xl">
-              今天先从一件小事开始。
+            <h2 className="max-w-xl text-4xl font-medium leading-tight text-[#334247] dark:text-[#e8edf2] sm:text-5xl">
+              今天从哪里开始？
             </h2>
-            <p className="mt-5 max-w-xl text-sm leading-7 text-[#65736c] dark:text-[#b8c4ce]">
-              常用入口、任务和 DDL 都收好了。需要什么，就打开什么。
+            <p className="search-brand mt-5 max-w-xl text-sm leading-7 text-[#65736c] dark:text-[#b8c4ce]">
+              Begin Anywhere.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -57,7 +57,7 @@ export function HomeSection({ data, onNavigate }: HomeSectionProps) {
           </div>
 
           <div className="space-y-5">
-            <div className="rounded-[28px] border border-white/34 bg-white/18 p-5 dark:border-white/10 dark:bg-white/8">
+            <div className={`${tileClass} p-5`}>
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-medium text-[#334247] dark:text-[#e8edf2]">今日任务</p>
@@ -86,7 +86,7 @@ export function HomeSection({ data, onNavigate }: HomeSectionProps) {
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-white/34 bg-white/18 p-5 dark:border-white/10 dark:bg-white/8">
+            <div className={`${tileClass} p-5`}>
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-medium text-[#334247] dark:text-[#e8edf2]">最近 DDL</p>

@@ -4,19 +4,33 @@ import {
   glassSurfaceClass,
   iconButtonClass,
   inputClass,
+  liquidGlassChromeClass,
+  liquidGlassControlClass,
+  liquidGlassSurfaceClass,
   primaryButtonClass,
   secondaryButtonClass,
   softPanelClass,
+  tileClass,
 } from "./design";
 
 describe("design tokens", () => {
-  it("uses one module-scoped glass surface token", () => {
+  it("uses liquid glass tokens for chrome, controls, and module surfaces", () => {
+    expect(liquidGlassChromeClass).toContain("backdrop-blur-[36px]");
+    expect(liquidGlassChromeClass).toContain("inset_0_1px_1px_rgba(255,255,255,0.32)");
+    expect(liquidGlassControlClass).toContain("backdrop-blur-[30px]");
+    expect(liquidGlassControlClass).toContain("inset_0_1px_1px_rgba(255,255,255,0.26)");
+    expect(liquidGlassSurfaceClass).toContain("backdrop-blur-[34px]");
+    expect(liquidGlassSurfaceClass).toContain("inset_0_1px_1px_rgba(255,255,255,0.22)");
+
     expect(glassSurfaceClass).toContain("rounded-[28px]");
-    expect(glassSurfaceClass).toContain("border border-white/35");
-    expect(glassSurfaceClass).toContain("bg-white/[0.20]");
-    expect(glassSurfaceClass).toContain("backdrop-blur-2xl");
-    expect(glassSurfaceClass).toContain("dark:bg-slate-950/[0.26]");
+    expect(glassSurfaceClass).toContain(liquidGlassSurfaceClass);
     expect(softPanelClass).toContain(glassSurfaceClass);
+    expect(softPanelClass).not.toContain("backdrop-blur-2xl");
+  });
+
+  it("keeps card hover states static without lift animation", () => {
+    expect(softPanelClass).not.toContain("hover:-translate-y-px");
+    expect(tileClass).not.toContain("hover:-translate-y-px");
   });
 
   it("uses Monet and Starry Night button colors instead of emerald dashboard buttons", () => {

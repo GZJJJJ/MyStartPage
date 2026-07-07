@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Moon, Search, Sun } from "lucide-react";
+import { liquidGlassChromeClass, liquidGlassControlClass } from "@/lib/design";
 import { buildSearchUrl, searchEngineLabels } from "@/lib/search";
 import { getSectionMeta, type SectionId } from "@/lib/sections";
 import type { SearchEngineId } from "@/lib/types";
@@ -18,8 +19,8 @@ const searchEngines = Object.keys(searchEngineLabels) as SearchEngineId[];
 
 const searchShellClass = [
   "order-3 col-span-2 flex min-w-0 flex-1 items-center gap-2 rounded-2xl",
-  "border border-white/30 bg-[#fff8ee]/[0.24] px-3 py-2 dark:border-white/10 dark:bg-[#07111f]/[0.42]",
-  "backdrop-blur-xl transition-colors",
+  "px-3 py-2 transition-colors",
+  liquidGlassControlClass,
   "xl:order-none xl:col-span-1",
 ].join(" ");
 
@@ -31,7 +32,8 @@ const searchInputClass = [
 ].join(" ");
 
 const searchSelectClass = [
-  "h-10 w-[6.6rem] shrink-0 appearance-none rounded-xl border border-white/25 bg-[#fff8ee]/[0.24] shadow-none dark:border-white/10 dark:bg-[#07111f]/[0.42]",
+  "h-10 w-[6.6rem] shrink-0 appearance-none rounded-xl",
+  liquidGlassControlClass,
   "px-3 py-2 text-sm text-[#344046] dark:text-[#e8edf2]",
   "outline-none transition focus:border-[#93b8c2]/70 focus:ring-2 focus:ring-[#93b8c2]/20",
   "dark:focus:border-[#e5b84e]/40 dark:focus:ring-[#e5b84e]/15",
@@ -86,7 +88,7 @@ export function TopStatusBar({
   }
 
   return (
-    <header className="fixed left-4 right-4 top-4 z-40 rounded-[28px] border border-white/30 bg-white/[0.18] px-4 py-3 shadow-[0_20px_60px_rgba(70,85,90,0.12)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/[0.28] dark:shadow-[0_20px_60px_rgba(0,0,0,0.32)] sm:left-20 sm:right-6 sm:top-5 sm:px-5 sm:py-4">
+    <header className={`fixed left-4 right-4 top-4 z-40 rounded-[28px] px-4 py-3 sm:left-20 sm:right-6 sm:top-5 sm:px-5 sm:py-4 ${liquidGlassChromeClass}`}>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 xl:grid-cols-[minmax(13rem,auto)_minmax(20rem,1fr)_auto]">
         <div className="order-1 min-w-0 xl:order-none">
           <p className="truncate text-xs text-[#75847c] dark:text-[#9ca9b8]" suppressHydrationWarning>
@@ -136,7 +138,7 @@ export function TopStatusBar({
         <button
           type="button"
           onClick={onToggleDarkMode}
-          className="order-2 grid h-11 w-11 place-items-center justify-self-end rounded-full border border-white/35 bg-white/[0.22] text-[#334247] transition hover:bg-white/[0.30] focus:outline-none focus:ring-2 focus:ring-[#93b8c2]/24 dark:border-white/10 dark:bg-white/8 dark:text-[#e8edf2] dark:hover:bg-white/12 xl:order-none"
+          className={`order-2 grid h-11 w-11 place-items-center justify-self-end rounded-full text-[#334247] transition hover:bg-white/[0.30] focus:outline-none focus:ring-2 focus:ring-[#93b8c2]/24 dark:text-[#e8edf2] dark:hover:bg-white/[0.12] xl:order-none ${liquidGlassControlClass}`}
           aria-label={darkMode ? "切换到浅色模式" : "切换到深色模式"}
           title={darkMode ? "浅色模式" : "深色模式"}
         >
