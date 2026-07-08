@@ -199,7 +199,7 @@ export function DataTools({ data, cloudSync, onImport, className = "" }: DataToo
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-[22px] border border-white/30 bg-white/18 p-4 dark:border-white/10 dark:bg-slate-950/18">
             <p className="text-sm font-medium text-[#344046] dark:text-slate-100">邮件提醒</p>
-            <p className="mt-1 text-sm text-[#718078] dark:text-slate-400">已实现，默认发送到登录邮箱。</p>
+            <p className="mt-1 text-sm text-[#718078] dark:text-slate-400">DDL 和待办已实现，默认发送到登录邮箱。</p>
           </div>
           <div className="rounded-[22px] border border-white/30 bg-white/18 p-4 dark:border-white/10 dark:bg-slate-950/18">
             <p className="text-sm font-medium text-[#344046] dark:text-slate-100">微信提醒</p>

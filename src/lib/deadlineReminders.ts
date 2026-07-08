@@ -20,6 +20,16 @@ export type DeadlineReminderSource = {
   email: string | null;
 };
 
+export type TaskReminderSource = {
+  id: string;
+  user_id: string;
+  text: string;
+  completed: boolean;
+  notify_by_email: boolean | null;
+  notify_by_wechat: boolean | null;
+  email: string | null;
+};
+
 export type DueDeadlineReminder = {
   userId: string;
   deadlineId: string;
@@ -28,6 +38,14 @@ export type DueDeadlineReminder = {
   date: string;
   note: string;
   daysRemaining: number;
+  sentOn: string;
+};
+
+export type DueTaskReminder = {
+  userId: string;
+  taskId: string;
+  to: string;
+  text: string;
   sentOn: string;
 };
 
@@ -102,6 +120,40 @@ export function getDueDeadlineReminders(
   });
 }
 
+export function getDueTaskReminders(
+  tasks: TaskReminderSource[],
+  now = new Date(),
+  existingLogKeys = new Set<string>(),
+): DueTaskReminder[] {
+  const today = getUtcDateString(now);
+
+  return tasks.flatMap((task) => {
+    if (task.completed || !task.notify_by_email || !task.email) {
+      return [];
+    }
+
+    const logKey = getReminderLogKey({
+      userId: task.user_id,
+      deadlineId: task.id,
+      channel: "email",
+      reminderDaysBefore: 0,
+      sentOn: today,
+    });
+
+    if (existingLogKeys.has(logKey)) {
+      return [];
+    }
+
+    return [{
+      userId: task.user_id,
+      taskId: task.id,
+      to: task.email,
+      text: task.text,
+      sentOn: today,
+    }];
+  });
+}
+
 function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
@@ -148,6 +200,23 @@ export function buildDeadlineEmail(input: {
         <p><strong>剩余天数：</strong>${escapeHtml(remainingText)}</p>
         <p><strong>备注：</strong>${escapeHtml(input.note || "无")}</p>
         <p><strong>今日建议：</strong>${escapeHtml(advice)}</p>
+      </div>
+    `,
+  };
+}
+
+export function buildTaskEmail(input: {
+  to: string;
+  text: string;
+}): DeadlineEmail {
+  return {
+    to: input.to,
+    subject: `待办提醒：${input.text}`,
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.7; color: #1f2933;">
+        <h2 style="margin: 0 0 16px;">待办提醒</h2>
+        <p><strong>待办事项：</strong>${escapeHtml(input.text)}</p>
+        <p><strong>今日建议：</strong>先完成这件事中最小可交付的一步，完成后回到启动页勾选它。</p>
       </div>
     `,
   };

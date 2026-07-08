@@ -11,6 +11,8 @@ export type Task = {
   id: string;
   text: string;
   completed: boolean;
+  notifyByEmail: boolean;
+  notifyByWechat: boolean;
   createdAt: string;
 };
 

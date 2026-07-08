@@ -16,6 +16,7 @@ type TaskPanelProps = {
 export function TaskPanel({ tasks, onChange, className = "" }: TaskPanelProps) {
   const [formOpen, setFormOpen] = useState(false);
   const [text, setText] = useState("");
+  const [notifyByEmail, setNotifyByEmail] = useState(true);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,10 +32,13 @@ export function TaskPanel({ tasks, onChange, className = "" }: TaskPanelProps) {
         id: createId("task"),
         text: nextText,
         completed: false,
+        notifyByEmail,
+        notifyByWechat: false,
         createdAt: new Date().toISOString(),
       },
     ]);
     setText("");
+    setNotifyByEmail(true);
     setFormOpen(false);
   }
 
@@ -61,7 +65,7 @@ export function TaskPanel({ tasks, onChange, className = "" }: TaskPanelProps) {
       }
     >
       {formOpen ? (
-        <form onSubmit={handleSubmit} className="mb-6 flex flex-col gap-3 rounded-[24px] border border-white/40 bg-white/22 p-4 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/22 sm:flex-row">
+        <form onSubmit={handleSubmit} className="mb-6 grid gap-3 rounded-[24px] border border-white/40 bg-white/22 p-4 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/22 sm:grid-cols-[1fr_auto]">
           <input
             value={text}
             onChange={(event) => setText(event.target.value)}
@@ -73,6 +77,21 @@ export function TaskPanel({ tasks, onChange, className = "" }: TaskPanelProps) {
             <Plus size={16} />
             保存
           </button>
+          <div className="flex flex-wrap gap-4 sm:col-span-2">
+            <label className="inline-flex items-center gap-2 text-sm text-[#596861] dark:text-slate-300">
+              <input
+                type="checkbox"
+                checked={notifyByEmail}
+                onChange={(event) => setNotifyByEmail(event.target.checked)}
+                className="rounded border-white/40 bg-white/30 text-[#6f969b] focus:ring-[#93b8c2]/30"
+              />
+              每天邮件提醒
+            </label>
+            <label className="inline-flex items-center gap-2 text-sm text-[#718078] dark:text-slate-400">
+              <input type="checkbox" checked={false} disabled className="rounded border-white/40 bg-white/30" />
+              微信提醒（预留）
+            </label>
+          </div>
         </form>
       ) : null}
 
@@ -102,6 +121,19 @@ export function TaskPanel({ tasks, onChange, className = "" }: TaskPanelProps) {
             >
               {task.text}
             </span>
+            <button
+              type="button"
+              onClick={() =>
+                onChange(
+                  tasks.map((item) =>
+                    item.id === task.id ? { ...item, notifyByEmail: !item.notifyByEmail } : item,
+                  ),
+                )
+              }
+              className={`${secondaryButtonClass} shrink-0 px-3 py-1.5 text-xs`}
+            >
+              {task.notifyByEmail ? "邮件开" : "邮件关"}
+            </button>
             <button
               type="button"
               onClick={() => onChange(tasks.filter((item) => item.id !== task.id))}

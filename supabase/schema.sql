@@ -15,10 +15,15 @@ create table if not exists public.tasks (
   id text not null,
   text text not null,
   completed boolean not null default false,
+  notify_by_email boolean not null default false,
+  notify_by_wechat boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   primary key (user_id, id)
 );
+
+alter table public.tasks add column if not exists notify_by_email boolean not null default false;
+alter table public.tasks add column if not exists notify_by_wechat boolean not null default false;
 
 create table if not exists public.deadlines (
   user_id uuid not null references auth.users(id) on delete cascade,

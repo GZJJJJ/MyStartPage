@@ -42,7 +42,7 @@ async function replaceRows(client: SupabaseClient, table: SyncTable, userId: str
 export async function fetchCloudDashboardData(client: SupabaseClient, userId: string): Promise<SyncResult> {
   const [shortcuts, tasks, deadlines, settings] = await Promise.all([
     throwIfError(await client.from("shortcuts").select("id,name,url,created_at").eq("user_id", userId).order("created_at")),
-    throwIfError(await client.from("tasks").select("id,text,completed,created_at").eq("user_id", userId).order("created_at")),
+    throwIfError(await client.from("tasks").select("id,text,completed,notify_by_email,notify_by_wechat,created_at").eq("user_id", userId).order("created_at")),
     throwIfError(await client.from("deadlines").select("id,title,date,note,reminder_days,notify_by_email,notify_by_wechat,created_at").eq("user_id", userId).order("date")),
     throwIfError(await client.from("settings").select("note,decision_options,search_engine,email,migrated_at").eq("user_id", userId).maybeSingle()),
   ]);

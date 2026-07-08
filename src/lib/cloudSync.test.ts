@@ -6,7 +6,14 @@ describe("dashboardDataToCloudRows", () => {
   it("maps local dashboard data to user-scoped Supabase rows", () => {
     const data: DashboardData = {
       shortcuts: [{ id: "s1", name: "Docs", url: "https://docs.example", createdAt: "2026-07-01T00:00:00.000Z" }],
-      tasks: [{ id: "t1", text: "Ship sync", completed: false, createdAt: "2026-07-02T00:00:00.000Z" }],
+      tasks: [{
+        id: "t1",
+        text: "Ship sync",
+        completed: false,
+        notifyByEmail: true,
+        notifyByWechat: false,
+        createdAt: "2026-07-02T00:00:00.000Z",
+      }],
       deadlines: [
         {
           id: "d1",
@@ -27,7 +34,13 @@ describe("dashboardDataToCloudRows", () => {
     const rows = dashboardDataToCloudRows(data, "user-1", "joe@example.com");
 
     expect(rows.shortcuts[0]).toMatchObject({ id: "s1", user_id: "user-1", name: "Docs" });
-    expect(rows.tasks[0]).toMatchObject({ id: "t1", user_id: "user-1", completed: false });
+    expect(rows.tasks[0]).toMatchObject({
+      id: "t1",
+      user_id: "user-1",
+      completed: false,
+      notify_by_email: true,
+      notify_by_wechat: false,
+    });
     expect(rows.deadlines[0]).toMatchObject({
       id: "d1",
       user_id: "user-1",
@@ -49,7 +62,14 @@ describe("cloudRowsToDashboardData", () => {
   it("maps Supabase rows back to the existing dashboard shape", () => {
     const data = cloudRowsToDashboardData({
       shortcuts: [{ id: "s1", name: "Docs", url: "https://docs.example", created_at: "2026-07-01T00:00:00.000Z" }],
-      tasks: [{ id: "t1", text: "Ship sync", completed: true, created_at: "2026-07-02T00:00:00.000Z" }],
+      tasks: [{
+        id: "t1",
+        text: "Ship sync",
+        completed: true,
+        notify_by_email: true,
+        notify_by_wechat: false,
+        created_at: "2026-07-02T00:00:00.000Z",
+      }],
       deadlines: [
         {
           id: "d1",
@@ -72,7 +92,14 @@ describe("cloudRowsToDashboardData", () => {
 
     expect(data).toEqual({
       shortcuts: [{ id: "s1", name: "Docs", url: "https://docs.example", createdAt: "2026-07-01T00:00:00.000Z" }],
-      tasks: [{ id: "t1", text: "Ship sync", completed: true, createdAt: "2026-07-02T00:00:00.000Z" }],
+      tasks: [{
+        id: "t1",
+        text: "Ship sync",
+        completed: true,
+        notifyByEmail: true,
+        notifyByWechat: false,
+        createdAt: "2026-07-02T00:00:00.000Z",
+      }],
       deadlines: [
         {
           id: "d1",

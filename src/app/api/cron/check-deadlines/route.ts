@@ -1,11 +1,13 @@
 import { isCronRequestAuthorized } from "@/lib/apiAuth";
 import {
   buildDeadlineEmail,
+  buildTaskEmail,
   getDueDeadlineReminders,
+  getDueTaskReminders,
   getReminderLogKey,
   getUtcDateString,
 } from "@/lib/deadlineReminders";
-import type { DeadlineReminderSource } from "@/lib/deadlineReminders";
+import type { DeadlineReminderSource, TaskReminderSource } from "@/lib/deadlineReminders";
 import { sendDeadlineEmail } from "@/lib/email";
 import { createServiceSupabaseClient } from "@/lib/supabaseServer";
 
@@ -20,6 +22,7 @@ type ReminderLogRow = {
 };
 
 type DeadlineRow = Omit<DeadlineReminderSource, "email">;
+type TaskRow = Omit<TaskReminderSource, "email">;
 
 type SettingsRow = {
   user_id: string;
@@ -42,13 +45,23 @@ export async function GET(request: Request): Promise<Response> {
     const maxDate = addDays(today, 30);
     const serviceClient = createServiceSupabaseClient();
 
-    const [{ data: deadlines, error: deadlineError }, { data: settings, error: settingsError }, { data: logs, error: logsError }] =
+    const [
+      { data: deadlines, error: deadlineError },
+      { data: tasks, error: taskError },
+      { data: settings, error: settingsError },
+      { data: logs, error: logsError },
+    ] =
       await Promise.all([
         serviceClient
           .from("deadlines")
           .select("id,user_id,title,date,note,reminder_days,notify_by_email,notify_by_wechat")
           .gte("date", today)
           .lte("date", maxDate),
+        serviceClient
+          .from("tasks")
+          .select("id,user_id,text,completed,notify_by_email,notify_by_wechat")
+          .eq("completed", false)
+          .eq("notify_by_email", true),
         serviceClient.from("settings").select("user_id,email"),
         serviceClient
           .from("reminder_logs")
@@ -59,6 +72,9 @@ export async function GET(request: Request): Promise<Response> {
 
     if (deadlineError) {
       throw new Error(deadlineError.message);
+    }
+    if (taskError) {
+      throw new Error(taskError.message);
     }
     if (settingsError) {
       throw new Error(settingsError.message);
@@ -87,7 +103,12 @@ export async function GET(request: Request): Promise<Response> {
       ...deadline,
       email: emailByUserId.get(deadline.user_id) ?? null,
     }));
+    const taskSources: TaskReminderSource[] = ((tasks ?? []) as TaskRow[]).map((task) => ({
+      ...task,
+      email: emailByUserId.get(task.user_id) ?? null,
+    }));
     const dueReminders = getDueDeadlineReminders(sources, new Date(), existingLogKeys);
+    const dueTaskReminders = getDueTaskReminders(taskSources, new Date(), existingLogKeys);
     const failures: string[] = [];
     let sent = 0;
 
@@ -123,7 +144,42 @@ export async function GET(request: Request): Promise<Response> {
       }
     }
 
-    return Response.json({ ok: true, checked: sources.length, due: dueReminders.length, sent, failures });
+    for (const reminder of dueTaskReminders) {
+      try {
+        const providerId = await sendDeadlineEmail(
+          buildTaskEmail({
+            to: reminder.to,
+            text: reminder.text,
+          }),
+        );
+
+        const { error: logError } = await serviceClient.from("reminder_logs").insert({
+          user_id: reminder.userId,
+          deadline_id: reminder.taskId,
+          channel: "email",
+          reminder_days_before: 0,
+          sent_on: reminder.sentOn,
+          recipient_email: reminder.to,
+          email_provider_id: providerId,
+        });
+
+        if (logError) {
+          throw new Error(logError.message);
+        }
+
+        sent += 1;
+      } catch (error) {
+        failures.push(`${reminder.taskId}: ${error instanceof Error ? error.message : "发送失败"}`);
+      }
+    }
+
+    return Response.json({
+      ok: true,
+      checked: sources.length + taskSources.length,
+      due: dueReminders.length + dueTaskReminders.length,
+      sent,
+      failures,
+    });
   } catch (error) {
     return Response.json(
       { error: error instanceof Error ? error.message : "Cron 执行失败" },

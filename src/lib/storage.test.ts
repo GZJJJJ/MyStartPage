@@ -65,6 +65,31 @@ describe("parseImportPayload", () => {
     });
   });
 
+  it("accepts old task records and keeps task reminders off by default", () => {
+    const data = createDefaultData();
+    const payload = JSON.stringify({
+      version: 1,
+      exportedAt: "2026-07-06T00:00:00.000Z",
+      data: {
+        ...data,
+        tasks: [
+          {
+            id: "task-old",
+            text: "Legacy task",
+            completed: false,
+            createdAt: "2026-07-06T00:00:00.000Z",
+          },
+        ],
+      },
+    });
+
+    expect(parseImportPayload(payload).tasks[0]).toMatchObject({
+      id: "task-old",
+      notifyByEmail: false,
+      notifyByWechat: false,
+    });
+  });
+
   it("rejects invalid import payloads", () => {
     expect(() => parseImportPayload("{\"version\":2}")).toThrow("Invalid import file");
   });

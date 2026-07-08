@@ -7,14 +7,14 @@
 - 当前日期、星期、时间实时显示
 - 搜索框支持百度、Google、GitHub、B站
 - 常用网站快捷入口：新增、编辑、删除、打开
-- 今日任务：添加、完成、删除
+- 今日任务：添加、完成、删除、每天邮件提醒开关
 - DDL 倒计时：事件名称、日期、备注、提醒天数、邮件提醒开关、微信提醒预留字段
 - 随机决定器：每行一个选项，随机抽取
 - 深色模式，刷新后保持
 - JSON 数据导出和导入，格式继续使用 `version: 1`
 - Supabase Auth 登录 / 注册 / 退出登录
 - Supabase Postgres 云同步，`localStorage` 作为本地缓存
-- Vercel Cron 每天检查 DDL 并发送邮件提醒
+- Vercel Cron 每天检查 DDL 和未完成待办并发送邮件提醒
 
 ## 本地运行
 
@@ -110,7 +110,7 @@ supabase/schema.sql
 2. 如果已登录，再拉取 Supabase 云端数据。
 3. 首次登录且云端为空时，会把当前本地数据一次性迁移到云端。
 4. 用户修改数据时，先写 `localStorage`，再 debounce 同步到 Supabase。
-5. JSON 导入导出仍使用 `version: 1`。旧 DDL 没有提醒字段也能导入，会自动补：`reminderDays: [7, 3, 1, 0]`、`notifyByEmail: true`、`notifyByWechat: false`。
+5. JSON 导入导出仍使用 `version: 1`。旧 DDL 没有提醒字段也能导入，会自动补：`reminderDays: [7, 3, 1, 0]`、`notifyByEmail: true`、`notifyByWechat: false`。旧 task 会自动补 `notifyByEmail: false`、`notifyByWechat: false`，避免历史待办突然开始发提醒。
 
 ## Vercel 部署
 
@@ -148,7 +148,12 @@ Cron route：
 Authorization: Bearer <CRON_SECRET>
 ```
 
-Cron 会检查 `deadlines.reminder_days`，如果某个 DDL 到达提醒天数且 `reminder_logs` 当天没有记录，就发送邮件并写入日志，避免重复发送。
+Cron 会检查两类提醒：
+
+- `deadlines.reminder_days`：如果某个 DDL 到达提醒天数且 `reminder_logs` 当天没有记录，就发送邮件并写入日志。
+- `tasks.notify_by_email`：如果某个待办未完成、开启邮件提醒且当天没有记录，就发送一封待办提醒。
+
+两类提醒都通过 `reminder_logs` 避免同一天重复发送。
 
 ## 测试邮件
 
@@ -187,6 +192,8 @@ npm run build
 - `id text`
 - `text text`
 - `completed boolean`
+- `notify_by_email boolean`
+- `notify_by_wechat boolean`
 - `created_at timestamptz`
 - `updated_at timestamptz`
 

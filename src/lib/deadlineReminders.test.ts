@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   buildDeadlineEmail,
+  buildTaskEmail,
   getDueDeadlineReminders,
+  getDueTaskReminders,
   getReminderLogKey,
 } from "./deadlineReminders";
 
@@ -60,6 +62,65 @@ describe("buildDeadlineEmail", () => {
     expect(email.html).toContain("2026-07-09");
     expect(email.html).toContain("剩余 3 天");
     expect(email.html).toContain("Attach appendix");
+    expect(email.html).toContain("今日建议");
+  });
+});
+
+describe("getDueTaskReminders", () => {
+  it("returns incomplete task reminders and skips completed or already sent tasks", () => {
+    const tasks = [
+      {
+        id: "task-1",
+        user_id: "user-1",
+        text: "Finish homework",
+        completed: false,
+        notify_by_email: true,
+        notify_by_wechat: false,
+        email: "joe@example.com",
+      },
+      {
+        id: "task-2",
+        user_id: "user-1",
+        text: "Done",
+        completed: true,
+        notify_by_email: true,
+        notify_by_wechat: false,
+        email: "joe@example.com",
+      },
+      {
+        id: "task-3",
+        user_id: "user-1",
+        text: "Muted",
+        completed: false,
+        notify_by_email: false,
+        notify_by_wechat: false,
+        email: "joe@example.com",
+      },
+    ];
+
+    expect(getDueTaskReminders(tasks, new Date("2026-07-08T08:00:00.000Z"), new Set())).toHaveLength(1);
+
+    const logKey = getReminderLogKey({
+      userId: "user-1",
+      deadlineId: "task-1",
+      channel: "email",
+      reminderDaysBefore: 0,
+      sentOn: "2026-07-08",
+    });
+
+    expect(getDueTaskReminders(tasks, new Date("2026-07-08T08:00:00.000Z"), new Set([logKey]))).toEqual([]);
+  });
+});
+
+describe("buildTaskEmail", () => {
+  it("includes task text and deterministic advice", () => {
+    const email = buildTaskEmail({
+      to: "joe@example.com",
+      text: "Finish homework",
+    });
+
+    expect(email.subject).toContain("待办提醒");
+    expect(email.html).toContain("Finish homework");
     expect(email.html).toContain("今日建议");
   });
 });

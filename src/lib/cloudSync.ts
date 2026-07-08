@@ -14,6 +14,8 @@ export type TaskRow = {
   user_id?: string;
   text: string;
   completed: boolean;
+  notify_by_email?: boolean | null;
+  notify_by_wechat?: boolean | null;
   created_at: string;
 };
 
@@ -81,6 +83,8 @@ export function dashboardDataToCloudRows(data: DashboardData, userId: string, em
       user_id: userId,
       text: task.text,
       completed: task.completed,
+      notify_by_email: task.notifyByEmail,
+      notify_by_wechat: task.notifyByWechat,
       created_at: task.createdAt,
     })),
     deadlines: data.deadlines.map((deadline) => ({
@@ -118,6 +122,8 @@ export function cloudRowsToDashboardData(rows: CloudRows): DashboardData {
       id: task.id,
       text: task.text,
       completed: task.completed,
+      notifyByEmail: task.notify_by_email ?? false,
+      notifyByWechat: task.notify_by_wechat ?? false,
       createdAt: task.created_at,
     })),
     deadlines: rows.deadlines.map(toDeadline),

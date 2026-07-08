@@ -53,14 +53,25 @@ function isShortcut(value: unknown): value is Shortcut {
   );
 }
 
-function isTask(value: unknown): value is Task {
-  return (
-    isRecord(value) &&
-    isString(value.id) &&
-    isString(value.text) &&
-    typeof value.completed === "boolean" &&
-    isString(value.createdAt)
-  );
+function normalizeTask(value: unknown): Task | null {
+  if (
+    !isRecord(value) ||
+    !isString(value.id) ||
+    !isString(value.text) ||
+    typeof value.completed !== "boolean" ||
+    !isString(value.createdAt)
+  ) {
+    return null;
+  }
+
+  return {
+    id: value.id,
+    text: value.text,
+    completed: value.completed,
+    notifyByEmail: typeof value.notifyByEmail === "boolean" ? value.notifyByEmail : false,
+    notifyByWechat: typeof value.notifyByWechat === "boolean" ? value.notifyByWechat : false,
+    createdAt: value.createdAt,
+  };
 }
 
 function normalizeReminderDays(value: unknown): number[] {
@@ -102,12 +113,16 @@ export function normalizeDashboardData(value: unknown): DashboardData | null {
     !Array.isArray(value.shortcuts) ||
     !value.shortcuts.every(isShortcut) ||
     !Array.isArray(value.tasks) ||
-    !value.tasks.every(isTask) ||
     !Array.isArray(value.deadlines) ||
     !isString(value.note) ||
     !isString(value.decisionOptions) ||
     !isSearchEngine(value.searchEngine)
   ) {
+    return null;
+  }
+
+  const tasks = value.tasks.map(normalizeTask);
+  if (tasks.some((item) => item === null)) {
     return null;
   }
 
@@ -118,7 +133,7 @@ export function normalizeDashboardData(value: unknown): DashboardData | null {
 
   return {
     shortcuts: value.shortcuts,
-    tasks: value.tasks,
+    tasks: tasks as Task[],
     deadlines: deadlines as Deadline[],
     note: value.note,
     decisionOptions: value.decisionOptions,
