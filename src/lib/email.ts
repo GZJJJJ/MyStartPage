@@ -1,32 +1,62 @@
+import nodemailer from "nodemailer";
+import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import type { DeadlineEmail } from "./deadlineReminders";
 
-export async function sendDeadlineEmail(email: DeadlineEmail): Promise<string | null> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
+export type SmtpConfig = {
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+  pass: string;
+  from: string;
+};
 
-  if (!apiKey || !from) {
-    throw new Error("Email service is not configured");
+type EmailEnv = Record<string, string | undefined>;
+
+function requireEnv(value: string | undefined): string {
+  if (!value?.trim()) {
+    throw new Error("SMTP service is not configured");
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
+  return value.trim();
+}
+
+export function getSmtpConfig(env: EmailEnv = process.env): SmtpConfig {
+  const host = requireEnv(env.SMTP_HOST);
+  const port = Number(requireEnv(env.SMTP_PORT));
+
+  if (!Number.isInteger(port) || port <= 0) {
+    throw new Error("SMTP service is not configured");
+  }
+
+  return {
+    host,
+    port,
+    secure: requireEnv(env.SMTP_SECURE).toLowerCase() === "true",
+    user: requireEnv(env.SMTP_USER),
+    pass: requireEnv(env.SMTP_PASS),
+    from: requireEnv(env.EMAIL_FROM),
+  };
+}
+
+export async function sendDeadlineEmail(email: DeadlineEmail): Promise<string | null> {
+  const config = getSmtpConfig();
+  const transport = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
     },
-    body: JSON.stringify({
-      from,
-      to: [email.to],
-      subject: email.subject,
-      html: email.html,
-    }),
   });
 
-  const payload = (await response.json().catch(() => null)) as { id?: string; message?: string } | null;
+  const result = await transport.sendMail({
+    from: config.from,
+    to: email.to,
+    subject: email.subject,
+    html: email.html,
+  });
 
-  if (!response.ok) {
-    throw new Error(payload?.message ?? "Failed to send email");
-  }
-
-  return payload?.id ?? null;
+  return (result as SMTPTransport.SentMessageInfo).messageId ?? null;
 }

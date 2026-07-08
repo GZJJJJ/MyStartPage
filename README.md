@@ -37,8 +37,12 @@ NEXT_PUBLIC_SUPABASE_URL=你的 Supabase Project URL
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=你的 Supabase publishable/anon key
 SUPABASE_SERVICE_ROLE_KEY=你的 Supabase service role/secret key
 CRON_SECRET=至少 16 位随机字符串
-RESEND_API_KEY=Resend API key
-EMAIL_FROM=DDL Reminder <onboarding@resend.dev>
+SMTP_HOST=smtp.qq.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=你的QQ邮箱@qq.com
+SMTP_PASS=QQ邮箱生成的SMTP授权码
+EMAIL_FROM=DDL Reminder <你的QQ邮箱@qq.com>
 ```
 
 要点：
@@ -46,7 +50,31 @@ EMAIL_FROM=DDL Reminder <onboarding@resend.dev>
 - `NEXT_PUBLIC_SUPABASE_*` 会进入前端，只放 Supabase URL 和 publishable/anon key。
 - `SUPABASE_SERVICE_ROLE_KEY` 只在 API route 中使用，不要加 `NEXT_PUBLIC_`。
 - `CRON_SECRET` 会被 Vercel Cron 自动作为 `Authorization: Bearer ...` 发送。
-- 邮件服务当前按 Resend HTTP API 接入；生产发信可能需要在邮件服务商侧验证 sender，这不等于必须给网站购买自定义域名。
+- 邮件服务当前按 SMTP 接入。没有个人域名时，第一版建议用 QQ 邮箱授权码；`SMTP_PASS` 不是邮箱登录密码。
+
+QQ 邮箱 SMTP 推荐配置：
+
+```env
+SMTP_HOST=smtp.qq.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=你的QQ邮箱@qq.com
+SMTP_PASS=QQ邮箱设置里生成的授权码
+EMAIL_FROM=DDL Reminder <你的QQ邮箱@qq.com>
+```
+
+Outlook SMTP 可尝试配置：
+
+```env
+SMTP_HOST=smtp.office365.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=你的Outlook邮箱
+SMTP_PASS=你的Outlook应用密码或可用认证凭据
+EMAIL_FROM=DDL Reminder <你的Outlook邮箱>
+```
+
+Outlook 账号可能要求 Modern Auth，普通密码式 SMTP 不一定可用；QQ 邮箱授权码更适合第一版。
 
 ## 创建 Supabase 项目
 
